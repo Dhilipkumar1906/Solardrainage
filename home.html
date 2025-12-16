@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SolarDrainage | Live Status</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #111;
+            color: #fff;
+        }
+
+        header {
+            background: #000;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            color: #00ff99;
+            margin: 0;
+        }
+
+        .alert-bar {
+            background: #5a2b2b;
+            color: #ffdede;
+            padding: 10px;
+            text-align: center;
+            display: none;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .container {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: #2b2f2f;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 0 15px rgba(0,255,150,0.15);
+            position: relative;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #00ff99;
+        }
+
+        .card p {
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .alert {
+            border: 2px solid red;
+            box-shadow: 0 0 25px red;
+        }
+
+        .status-open { color: red; }
+        .status-closed { color: #00ff99; }
+        .level-safe { color: #00ff99; }
+        .level-warning { color: orange; }
+        .level-critical { color: red; }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #000;
+            font-size: 13px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>SolarDrainage</h1>
+    <div>Live Monitoring Dashboard</div>
+</header>
+
+<div class="alert-bar" id="globalAlert">
+    ⚠ Unauthorized opening detected! Immediate action required!
+</div>
+
+<div class="container">
+
+    <!-- T-Nagar Lid 1 (Hardware Example) -->
+    <div class="card">
+        <h3>T-Nagar Lid 1</h3>
+        <p>🔒 Lid Status: <span class="status-closed">Closed</span></p>
+        <p>💧 Water Level: <span class="level-warning">Medium</span></p>
+        <p>🌀 Gas Level: <span class="level-critical">Critical</span></p>
+        <p>🌡 Temperature: 30°C</p>
+    </div>
+
+    <!-- T-Nagar Lid 2 (ThingSpeak) -->
+    <div class="card" id="lid2-card">
+        <h3>T-Nagar Lid 2</h3>
+        <p>🔒 Lid Status: <span id="lid2-status"> Loading...</span></p>
+        <p>💧 Water Level: <span id="lid2-water">Loading...</span></p>
+        <p>🌀 Gas Level: <span id="lid2-gas">Loading...</span></p>
+        <p>🌡 Temperature: <span id="lid2-temp">Loading...</span></p>
+    </div>
+
+    <!-- T-Nagar Lid 3 (ThingSpeak) -->
+    <div class="card" id="lid3-card">
+        <h3>T-Nagar Lid 3</h3>
+        <p>🔒 Lid Status: <span id="lid3-status">Loading...</span></p>
+        <p>💧 Water Level: <span id="lid3-water">Loading...</span></p>
+        <p>🌀 Gas Level: <span id="lid3-gas">Loading...</span></p>
+        <p>🌡 Temperature: <span id="lid3-temp">Loading...</span></p>
+    </div>
+
+</div>
+
+<footer>
+    © 2025 Solar Powered Manhole Lid & Drainage Monitoring System
+</footer>
+
+<audio id="alertSound">
+    <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
+</audio>
+
+<script>
+async function fetchThingSpeak(channelId, apiKey, prefix) {
+    const url = `https://api.thingspeak.com/channels/${channelId}/feeds/last.json?api_key=${apiKey}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    const water = data.field1;
+    const temp = data.field2;
+    const lid = data.field3;
+    const gas = data.field4;
+
+    const lidText = (lid === '1' || lid === 1) ? 'Open' : 'Closed';
+    document.getElementById(prefix + '-status').innerText = lidText;
+    document.getElementById(prefix + '-water').innerText = water;
+    document.getElementById(prefix + '-gas').innerText = gas;
+    document.getElementById(prefix + '-temp').innerText = temp + '°C';
+
+    const card = document.getElementById(prefix + '-card');
+
+    if (lidText === 'Open') {
+        card.classList.add('alert');
+        document.getElementById('globalAlert').style.display = 'block';
+        document.getElementById('alertSound').play();
+    } else {
+        card.classList.remove('alert');
+    }
+}
+
+function refreshData() {
+    fetchThingSpeak('3205130', '1T51GZ5IFFAHKOEF', 'lid2');
+    fetchThingSpeak('3205159', '8BXXA18F0MRLY7DO', 'lid3');
+}
+
+refreshData();
+setInterval(refreshData, 15000);
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Status - SolarDrainage</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Main CSS -->
+  <style>
+    body {
+      background: #0c0f0f;
+      color: #eaeaea;
+      font-family: Arial, sans-serif;
+    }
+
+    .card {
+      background: rgba(60, 65, 65, 0.9);
+      border-radius: 15px;
+      box-shadow: 0px 0px 12px rgba(0,255,128,0.15);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      color: white;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .icon {
+      font-size: 28px;
+      color: #00ff99;
+      margin-right: 8px;
+    }
+
+    .blink-card {
+      border: 2px solid red !important;
+      animation: blink-card 1s infinite;
+    }
+
+    @keyframes blink-card {
+      0% { box-shadow: 0 0 10px red; }
+      50% { box-shadow: 0 0 25px red; }
+      100% { box-shadow: 0 0 10px red; }
+    }
+  </style>
+</head>
+
+<body>
+
+<main class="mt-5 pt-5">
+
+  <div class="container text-center my-5">
+    <h1 class="text-success fw-bold">Solar Drainage Monitoring Dashboard</h1>
+    <p class="lead">Real-time monitoring of manhole lids and drainage conditions</p>
+  </div>
+
+  <!-- GLOBAL ALERT -->
+  <div class="container my-3">
+    <div id="globalAlert" class="alert alert-danger d-flex align-items-center d-none">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      🚨 Emergency Alert: Unauthorized opening detected!
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row g-4">
+
+      <!-- T-Nagar Lid 1 (Static) -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card p-3">
+          <h5>T-Nagar Lid 1</h5>
+          <p><i class="bi bi-lock-fill icon"></i> Lid Status: <span class="text-success">Closed</span></p>
+          <p><i class="bi bi-droplet icon"></i> Water Level: Medium</p>
+          <p><i class="bi bi-wind icon"></i> Gas Level: Critical</p>
+          <p><i class="bi bi-thermometer-half icon"></i> Temperature: 30°C</p>
+        </div>
+      </div>
+
+      <!-- T-Nagar Lid 2 (ThingSpeak) -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card p-3" id="lid2-card">
+          <h5>T-Nagar Lid 2</h5>
+          <p><i class="bi bi-lock-fill icon"></i> Lid Status: <span id="lid2-status">Loading...</span></p>
+          <p><i class="bi bi-droplet icon"></i> Water Level: <span id="lid2-water">Loading...</span></p>
+          <p><i class="bi bi-wind icon"></i> Gas Level: <span id="lid2-gas">Loading...</span></p>
+          <p><i class="bi bi-thermometer-high icon"></i> Temperature: <span id="lid2-temp">Loading...</span></p>
+        </div>
+      </div>
+
+      <!-- T-Nagar Lid 3 (ThingSpeak) -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card p-3" id="lid3-card">
+          <h5>T-Nagar Lid 3</h5>
+          <p><i class="bi bi-lock-fill icon"></i> Lid Status: <span id="lid3-status">Loading...</span></p>
+          <p><i class="bi bi-droplet icon"></i> Water Level: <span id="lid3-water">Loading...</span></p>
+          <p><i class="bi bi-wind icon"></i> Gas Level: <span id="lid3-gas">Loading...</span></p>
+          <p><i class="bi bi-thermometer-low icon"></i> Temperature: <span id="lid3-temp">Loading...</span></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer class="text-center mt-5 mb-3 text-secondary">
+  Last Updated: <span class="text-success">Live</span>
+</footer>
+
+<audio id="alertSound">
+  <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
+</audio>
+
+<!-- JAVASCRIPT -->
+<script>
+async function fetchThingSpeak(channelId, apiKey, prefix) {
+
+  const url = `https://api.thingspeak.com/channels/${channelId}/feeds/last.json?api_key=${apiKey}`;
+  const res = await fetch(url);
+  const data = await res.json();
+
+  // FIELD MAPPING
+  const water = data.field1;
+  const temp = data.field2;
+  const lidValue = data.field3; // 0 or 1
+  const gas = data.field4;
+
+  const card = document.getElementById(prefix + '-card');
+  const alertBar = document.getElementById('globalAlert');
+
+  // LID LOGIC
+  if (lidValue == 1) {
+    document.getElementById(prefix + '-status').innerText = 'Open';
+    document.getElementById(prefix + '-status').className = 'text-danger';
+    card.classList.add('blink-card');
+    alertBar.classList.remove('d-none');
+    document.getElementById('alertSound').play();
+  } else {
+    document.getElementById(prefix + '-status').innerText = 'Closed';
+    document.getElementById(prefix + '-status').className = 'text-success';
+    card.classList.remove('blink-card');
+  }
+
+  document.getElementById(prefix + '-water').innerText = water;
+  document.getElementById(prefix + '-gas').innerText = gas;
+  document.getElementById(prefix + '-temp').innerText = temp + '°C';
+}
+
+function refreshData() {
+  fetchThingSpeak('YOUR_CHANNEL_ID_1', 'YOUR_READ_API_KEY_1', 'lid2');
+  fetchThingSpeak('YOUR_CHANNEL_ID_2', 'YOUR_READ_API_KEY_2', 'lid3');
+}
+
+refreshData();
+setInterval(refreshData, 15000);
+</script>
+
+</body>
+</html>
+  

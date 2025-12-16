@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GRITX 8.0</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: black;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      position: relative;
+    }
+
+    /* 🔥 Background Aurora Gradient */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(circle at 50% 50%, rgba(255,215,0,0.08), transparent 70%),
+                  radial-gradient(circle at 80% 20%, rgba(255,140,0,0.06), transparent 60%),
+                  radial-gradient(circle at 20% 80%, rgba(255,69,0,0.05), transparent 60%);
+      background-size: 200% 200%;
+      animation: aurora 15s ease-in-out infinite alternate;
+      z-index: -3;
+    }
+
+    @keyframes aurora {
+      0%   { background-position: 50% 50%; }
+      50%  { background-position: 60% 40%; }
+      100% { background-position: 40% 60%; }
+    }
+
+    /* Background blurred phoenix logo */
+    .bg-logo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      opacity: 0.15;
+      filter: blur(25px);
+      z-index: 0;
+      animation: bgPulse 12s ease-in-out infinite;
+    }
+
+    @keyframes bgPulse {
+      0%   { transform: translate(-50%, -50%) scale(1); }
+      50%  { transform: translate(-50%, -50%) scale(1.08); }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    /* Foreground phoenix logo */
+    .logo {
+      width: 220px;
+      opacity: 0;
+      filter: drop-shadow(0 0 10px gold);
+      position: absolute;
+      z-index: 2;
+      animation: logoAnim 4s ease forwards;
+    }
+
+    @keyframes logoAnim {
+      0%   { opacity: 0; transform: scale(0.5); }
+      30%  { opacity: 1; transform: scale(1.1); }
+      60%  { opacity: 1; transform: scale(1); }
+      80%  { opacity: 1; transform: scale(0.5) blur(0px); }
+      100% { opacity: 0; transform: scale(0.2) blur(100px); }
+    }
+
+    /* Energy Ring */
+    .energy-ring {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 100px; height: 100px;
+      border: 2px solid gold;
+      border-radius: 50%;
+      opacity: 0;
+      filter: blur(8px);
+      transform: translate(-50%, -50%) scale(0.2);
+      animation: ringExpand 1.5s ease-out forwards;
+      animation-delay: 3.5s;
+      z-index: 1;
+    }
+
+    @keyframes ringExpand {
+      0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+      50%  { opacity: 0.6; transform: translate(-50%, -50%) scale(1.2); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5); }
+    }
+
+    /* Phoenix feathers */
+    .feather {
+      position: absolute;
+      width: 6px;
+      height: 20px;
+      background: radial-gradient(circle, gold, transparent);
+      border-radius: 50%;
+      top: 50%; left: 50%;
+      opacity: 0;
+      animation: featherFly 2s ease-out forwards;
+      z-index: 2;
+    }
+
+    @keyframes featherFly {
+      0%   { transform: translate(0,0) rotate(0deg) scale(0.3); opacity: 0; }
+      50%  { opacity: 1; }
+      100% { transform: translate(var(--x,200px), var(--y,-120px)) rotate(var(--rot,90deg)) scale(0); opacity: 0; }
+    }
+
+    /* GRITX 8.0 text */
+    .title {
+      font-size: 80px;
+      font-weight: bold;
+      color: white;
+      letter-spacing: 5px;
+      background: linear-gradient(90deg, gold, orange, white);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px gold, 0 0 40px orange;
+      opacity: 0;
+      animation: textAnim 2s ease forwards, glowFlash 2s ease-in-out forwards;
+      animation-delay: 3.5s;
+      z-index: 3;
+    }
+
+    @keyframes textAnim {
+      0%   { opacity: 0; transform: scale(0.5); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes glowFlash {
+      0%   { text-shadow: 0 0 10px gold, 0 0 20px orange; }
+      50%  { text-shadow: 0 0 40px gold, 0 0 80px orange, 0 0 120px white; }
+      100% { text-shadow: 0 0 25px gold, 0 0 50px orange; }
+    }
+
+    /* Floating Sparks */
+    .particles {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .particle {
+      position: absolute;
+      bottom: -10px;
+      width: 6px;
+      height: 6px;
+      background: radial-gradient(circle, gold, transparent);
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: rise 8s linear infinite;
+    }
+
+    @keyframes rise {
+      0%   { transform: translateY(0) scale(0.5); opacity: 0.3; }
+      50%  { transform: translateY(-50vh) scale(1.5); opacity: 1; }
+      100% { transform: translateY(-100vh) scale(0.2); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Particles -->
+  <div class="particles">
+    <div class="particle" style="left:15%; animation-delay:0s;"></div>
+    <div class="particle" style="left:35%; animation-delay:2s;"></div>
+    <div class="particle" style="left:55%; animation-delay:4s;"></div>
+    <div class="particle" style="left:75%; animation-delay:1s;"></div>
+    <div class="particle" style="left:25%; animation-delay:3s;"></div>
+    <div class="particle" style="left:85%; animation-delay:5s;"></div>
+  </div>
+
+  <!-- Background blurred phoenix -->
+  <img src="image.png" alt="Phoenix Background" class="bg-logo">
+
+  <!-- Foreground animated phoenix -->
+  <img src="image.png" alt="Phoenix Logo" class="logo">
+
+  <!-- Energy Ring -->
+  <div class="energy-ring"></div>
+
+  <!-- Phoenix Feathers -->
+  <div class="feather" style="--x:180px; --y:-80px; --rot:20deg; animation-delay:3.6s;"></div>
+  <div class="feather" style="--x:-160px; --y:-100px; --rot:-30deg; animation-delay:3.7s;"></div>
+  <div class="feather" style="--x:140px; --y:-140px; --rot:50deg; animation-delay:3.8s;"></div>
+  <div class="feather" style="--x:-120px; --y:-130px; --rot:-70deg; animation-delay:3.9s;"></div>
+  <div class="feather" style="--x:200px; --y:-150px; --rot:90deg; animation-delay:4s;"></div>
+
+  <!-- GRITX Text -->
+  <div class="title">GRITX 8.0</div>
+
+</body>
+</html>
